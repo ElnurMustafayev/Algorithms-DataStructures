@@ -119,43 +119,32 @@ namespace trees {
 			else if (found->left == nullptr || found->right == nullptr) {
 				// found item is left
 				if (found->parent->data > found->data) {
-					// if left child is not empty
-					if (found->left != nullptr) {
-						found->parent->left = found->left;
-					}
 
-					// if right child is not empty
-					if (found->right != nullptr) {
-						found->parent->left = found->right;
-					}
+					found->parent->left = found->left != nullptr
+						? found->left	// if left child is not empty
+						: found->right;	// if right child is not empty
 				}
 
 				// found item is right
-				if (found->parent->data > found->data) {
-					// if left child is not empty
-					if (found->left != nullptr) {
-						found->parent->right = found->left;
-					}
+				else if (found->parent->data > found->data) {
 
-					// if right child is not empty
-					if (found->right != nullptr) {
-						found->parent->right = found->right;
-					}
+					found->parent->right = found->left != nullptr
+						? found->left	// if left child is not empty
+						: found->right;	// if right child is not empty
 				}
 				delete found;
 			}
 
 			// if the node contains left and rigth
 			else if (found->left != nullptr && found->right != nullptr) {
-				TreeNode<T>* toDelete = this->min(found->right);
-				found->data = toDelete->data;
+				// find right's min element for replace
+				TreeNode<T>* toReplace = this->min(found->right);
 
-				if (toDelete->data > toDelete->parent->data)
-					found->parent->right = nullptr;
-				else
-					found->parent->left = nullptr;
+				// replace values
+				swap(found->data, toReplace->data);
 
-				delete toDelete;
+				// delete node which was replaced with recursion calling
+				remove(toReplace->data);
 			}
 		}
 
